@@ -1,0 +1,61 @@
+[
+  { "id": "mex", "name": "Meksyk",                    "shortCode": "MEX", "flagUrl": "https://flagcdn.com/w80/mx.png",     "groupId": "A", "eliminated": false },
+  { "id": "rsa", "name": "Republika Płd. Afryki",     "shortCode": "RSA", "flagUrl": "https://flagcdn.com/w80/za.png",     "groupId": "A", "eliminated": false },
+  { "id": "kor", "name": "Korea Południowa",           "shortCode": "KOR", "flagUrl": "https://flagcdn.com/w80/kr.png",     "groupId": "A", "eliminated": false },
+  { "id": "cze", "name": "Czechy",                    "shortCode": "CZE", "flagUrl": "https://flagcdn.com/w80/cz.png",     "groupId": "A", "eliminated": false },
+
+  { "id": "can", "name": "Kanada",                    "shortCode": "CAN", "flagUrl": "https://flagcdn.com/w80/ca.png",     "groupId": "B", "eliminated": false },
+  { "id": "bih", "name": "Bośnia i Hercegowina",      "shortCode": "BIH", "flagUrl": "https://flagcdn.com/w80/ba.png",     "groupId": "B", "eliminated": false },
+  { "id": "qat", "name": "Katar",                     "shortCode": "QAT", "flagUrl": "https://flagcdn.com/w80/qa.png",     "groupId": "B", "eliminated": false },
+  { "id": "sui", "name": "Szwajcaria",                "shortCode": "SUI", "flagUrl": "https://flagcdn.com/w80/ch.png",     "groupId": "B", "eliminated": false },
+
+  { "id": "bra", "name": "Brazylia",                  "shortCode": "BRA", "flagUrl": "https://flagcdn.com/w80/br.png",     "groupId": "C", "eliminated": false },
+  { "id": "mar", "name": "Maroko",                    "shortCode": "MAR", "flagUrl": "https://flagcdn.com/w80/ma.png",     "groupId": "C", "eliminated": false },
+  { "id": "hai", "name": "Haiti",                     "shortCode": "HAI", "flagUrl": "https://flagcdn.com/w80/ht.png",     "groupId": "C", "eliminated": false },
+  { "id": "sco", "name": "Szkocja",                   "shortCode": "SCO", "flagUrl": "https://flagcdn.com/w80/gb-sct.png", "groupId": "C", "eliminated": false },
+
+  { "id": "usa", "name": "USA",                       "shortCode": "USA", "flagUrl": "https://flagcdn.com/w80/us.png",     "groupId": "D", "eliminated": false },
+  { "id": "par", "name": "Paragwaj",                  "shortCode": "PAR", "flagUrl": "https://flagcdn.com/w80/py.png",     "groupId": "D", "eliminated": false },
+  { "id": "aus", "name": "Australia",                 "shortCode": "AUS", "flagUrl": "https://flagcdn.com/w80/au.png",     "groupId": "D", "eliminated": false },
+  { "id": "tur", "name": "Turcja",                    "shortCode": "TUR", "flagUrl": "https://flagcdn.com/w80/tr.png",     "groupId": "D", "eliminated": false },
+
+  { "id": "ger", "name": "Niemcy",                    "shortCode": "GER", "flagUrl": "https://flagcdn.com/w80/de.png",     "groupId": "E", "eliminated": false },
+  { "id": "cuw", "name": "Curaçao",                   "shortCode": "CUW", "flagUrl": "https://flagcdn.com/w80/cw.png",     "groupId": "E", "eliminated": false },
+  { "id": "civ", "name": "Wybrzeże Kości Słoniowej",  "shortCode": "CIV", "flagUrl": "https://flagcdn.com/w80/ci.png",     "groupId": "E", "eliminated": false },
+  { "id": "ecu", "name": "Ekwador",                   "shortCode": "ECU", "flagUrl": "https://flagcdn.com/w80/ec.png",     "groupId": "E", "eliminated": false },
+
+  { "id": "ned", "name": "Holandia",                  "shortCode": "NED", "flagUrl": "https://flagcdn.com/w80/nl.png",     "groupId": "F", "eliminated": false },
+  { "id": "jpn", "name": "Japonia",                   "shortCode": "JPN", "flagUrl": "https://flagcdn.com/w80/jp.png",     "groupId": "F", "eliminated": false },
+  { "id": "swe", "name": "Szwecja",                   "shortCode": "SWE", "flagUrl": "https://flagcdn.com/w80/se.png",     "groupId": "F", "eliminated": false },
+  { "id": "tun", "name": "Tunezja",                   "shortCode": "TUN", "flagUrl": "https://flagcdn.com/w80/tn.png",     "groupId": "F", "eliminated": false },
+
+  { "id": "bel", "name": "Belgia",                    "shortCode": "BEL", "flagUrl": "https://flagcdn.com/w80/be.png",     "groupId": "G", "eliminated": false },
+  { "id": "egy", "name": "Egipt",                     "shortCode": "EGY", "flagUrl": "https://flagcdn.com/w80/eg.png",     "groupId": "G", "eliminated": false },
+  { "id": "irn", "name": "Iran",                      "shortCode": "IRN", "flagUrl": "https://flagcdn.com/w80/ir.png",     "groupId": "G", "eliminated": false },
+  { "id": "nzl", "name": "Nowa Zelandia",             "shortCode": "NZL", "flagUrl": "https://flagcdn.com/w80/nz.png",     "groupId": "G", "eliminated": false },
+
+  { "id": "esp", "name": "Hiszpania",                 "shortCode": "ESP", "flagUrl": "https://flagcdn.com/w80/es.png",     "groupId": "H", "eliminated": false },
+  { "id": "cpv", "name": "Cabo Verde",                "shortCode": "CPV", "flagUrl": "https://flagcdn.com/w80/cv.png",     "groupId": "H", "eliminated": false },
+  { "id": "ksa", "name": "Arabia Saudyjska",          "shortCode": "KSA", "flagUrl": "https://flagcdn.com/w80/sa.png",     "groupId": "H", "eliminated": false },
+  { "id": "uru", "name": "Urugwaj",                   "shortCode": "URU", "flagUrl": "https://flagcdn.com/w80/uy.png",     "groupId": "H", "eliminated": false },
+
+  { "id": "fra", "name": "Francja",                   "shortCode": "FRA", "flagUrl": "https://flagcdn.com/w80/fr.png",     "groupId": "I", "eliminated": false },
+  { "id": "sen", "name": "Senegal",                   "shortCode": "SEN", "flagUrl": "https://flagcdn.com/w80/sn.png",     "groupId": "I", "eliminated": false },
+  { "id": "irq", "name": "Irak",                      "shortCode": "IRQ", "flagUrl": "https://flagcdn.com/w80/iq.png",     "groupId": "I", "eliminated": false },
+  { "id": "nor", "name": "Norwegia",                  "shortCode": "NOR", "flagUrl": "https://flagcdn.com/w80/no.png",     "groupId": "I", "eliminated": false },
+
+  { "id": "arg", "name": "Argentyna",                 "shortCode": "ARG", "flagUrl": "https://flagcdn.com/w80/ar.png",     "groupId": "J", "eliminated": false },
+  { "id": "alg", "name": "Algieria",                  "shortCode": "ALG", "flagUrl": "https://flagcdn.com/w80/dz.png",     "groupId": "J", "eliminated": false },
+  { "id": "aut", "name": "Austria",                   "shortCode": "AUT", "flagUrl": "https://flagcdn.com/w80/at.png",     "groupId": "J", "eliminated": false },
+  { "id": "jor", "name": "Jordania",                  "shortCode": "JOR", "flagUrl": "https://flagcdn.com/w80/jo.png",     "groupId": "J", "eliminated": false },
+
+  { "id": "por", "name": "Portugalia",                "shortCode": "POR", "flagUrl": "https://flagcdn.com/w80/pt.png",     "groupId": "K", "eliminated": false },
+  { "id": "cod", "name": "DR Kongo",                  "shortCode": "COD", "flagUrl": "https://flagcdn.com/w80/cd.png",     "groupId": "K", "eliminated": false },
+  { "id": "uzb", "name": "Uzbekistan",                "shortCode": "UZB", "flagUrl": "https://flagcdn.com/w80/uz.png",     "groupId": "K", "eliminated": false },
+  { "id": "col", "name": "Kolumbia",                  "shortCode": "COL", "flagUrl": "https://flagcdn.com/w80/co.png",     "groupId": "K", "eliminated": false },
+
+  { "id": "eng", "name": "Anglia",                    "shortCode": "ENG", "flagUrl": "https://flagcdn.com/w80/gb-eng.png", "groupId": "L", "eliminated": false },
+  { "id": "cro", "name": "Chorwacja",                 "shortCode": "CRO", "flagUrl": "https://flagcdn.com/w80/hr.png",     "groupId": "L", "eliminated": false },
+  { "id": "gha", "name": "Ghana",                     "shortCode": "GHA", "flagUrl": "https://flagcdn.com/w80/gh.png",     "groupId": "L", "eliminated": false },
+  { "id": "pan", "name": "Panama",                    "shortCode": "PAN", "flagUrl": "https://flagcdn.com/w80/pa.png",     "groupId": "L", "eliminated": false }
+]
