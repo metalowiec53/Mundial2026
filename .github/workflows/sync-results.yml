@@ -12,5 +12,5 @@ jobs:
     steps:
       - name: Call sync endpoint
         run: |
-          curl --fail --silent --show-error \
+          curl --fail --show-error \
             "${{ secrets.APP_URL }}/api/sync-results?secret=${{ secrets.CRON_SECRET }}"
