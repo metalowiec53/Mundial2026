@@ -80,7 +80,7 @@ export async function GET(req: NextRequest) {
       continue;
     }
     if (fdo.score.fullTime.home === null) {
-      errors.push(`Score not ready for ${teamA.shortCode}-${teamB.shortCode}`);
+      errors.push(`Score not ready for ${teamA.shortCode}-${teamB.shortCode}: status=${fdo.status} score=${JSON.stringify(fdo.score)}`);
       continue;
     }
 
