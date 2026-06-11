@@ -74,8 +74,15 @@ export async function GET(req: NextRequest) {
         (m.homeTeam.tla === teamA.shortCode && m.awayTeam.tla === teamB.shortCode) ||
         (m.homeTeam.tla === teamB.shortCode && m.awayTeam.tla === teamA.shortCode)
     );
-    if (!fdo) continue;
-    if (fdo.score.fullTime.home === null) continue;
+    if (!fdo) {
+      const available = fdoMatches.map((m) => `${m.homeTeam.tla}-${m.awayTeam.tla}`).join(", ");
+      errors.push(`No FDO match for ${teamA.shortCode}-${teamB.shortCode}. Available: [${available}]`);
+      continue;
+    }
+    if (fdo.score.fullTime.home === null) {
+      errors.push(`Score not ready for ${teamA.shortCode}-${teamB.shortCode}`);
+      continue;
+    }
 
     const homeIsA = fdo.homeTeam.tla === teamA.shortCode;
     const wentToPenalties = fdo.score.duration === "PENALTY_SHOOTOUT";
