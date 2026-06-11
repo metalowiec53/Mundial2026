@@ -1,9 +1,11 @@
 import type { NextRequest } from "next/server";
+import { revalidateTag } from "next/cache";
 import { getAdminDb } from "@/lib/firebase/admin";
 import { getAllMatches, getAllTeams } from "@/lib/firebase/matches";
 import { getFinishedMatches } from "@/lib/football-data";
 import { calculatePoints } from "@/lib/firebase/scoring";
 import { getAllUserStats, DEFAULT_USER_STATS } from "@/lib/firebase/user-stats";
+import { CACHE_TAGS } from "@/lib/firebase/cached";
 import type { MatchDoc } from "@/lib/firebase/matches";
 import type { UserStats } from "@/lib/firebase/user-stats";
 
@@ -227,6 +229,12 @@ export async function GET(req: NextRequest) {
     }
 
     if (hasBonuses) await bonusBatch.commit();
+  }
+
+  if (synced > 0) {
+    revalidateTag(CACHE_TAGS.matches, "max");
+    revalidateTag(CACHE_TAGS.bets, "max");
+    revalidateTag(CACHE_TAGS.userStats, "max");
   }
 
   return Response.json({ synced, pending: pending.length, errors });

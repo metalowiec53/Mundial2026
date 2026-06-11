@@ -1,8 +1,10 @@
 "use server";
 
+import { updateTag } from "next/cache";
 import { getSession } from "@/lib/auth";
 import { getMatchById } from "@/lib/firebase/matches";
 import { getUserStats, setBoosterMatch } from "@/lib/firebase/user-stats";
+import { CACHE_TAGS } from "@/lib/firebase/cached";
 
 export async function setBoosterAction(
   matchId: string | null
@@ -26,4 +28,5 @@ export async function setBoosterAction(
   }
 
   await setBoosterMatch(session.userId, matchId);
+  updateTag(CACHE_TAGS.userStats);
 }

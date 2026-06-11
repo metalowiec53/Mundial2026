@@ -1,8 +1,10 @@
 "use server";
 
+import { updateTag } from "next/cache";
 import { getSession } from "@/lib/auth";
 import { getMatchById } from "@/lib/firebase/matches";
 import { upsertBet } from "@/lib/firebase/bets";
+import { CACHE_TAGS } from "@/lib/firebase/cached";
 
 export async function saveBetAction(
   matchId: string,
@@ -28,4 +30,5 @@ export async function saveBetAction(
   }
 
   await upsertBet(session.userId, matchId, scoreA, scoreB);
+  updateTag(CACHE_TAGS.bets);
 }

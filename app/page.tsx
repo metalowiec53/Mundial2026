@@ -1,12 +1,20 @@
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
-import { getUserById, getAllUsers } from "@/lib/firebase/users";
-import { getAllMatches, getAllTeams } from "@/lib/firebase/matches";
-import { getBetsByUser, getAllBets } from "@/lib/firebase/bets";
-import { getSpecialBetsByUser, getAllSpecialBets } from "@/lib/firebase/special-bets";
-import { getAllUserStats } from "@/lib/firebase/user-stats";
+import {
+  getCachedUserById,
+  getCachedAllUsers,
+  getCachedAllMatches,
+  getCachedAllTeams,
+  getCachedAllBets,
+  getCachedAllSpecialBets,
+  getCachedAllUserStats,
+} from "@/lib/firebase/cached";
+import { getBetsByUser } from "@/lib/firebase/bets";
+import { getSpecialBetsByUser } from "@/lib/firebase/special-bets";
 import { CHAMPION_BET_DEADLINE, FIRST_KICKOFF_AT } from "@/lib/constants";
 import HomeClient from "./home-client";
+import type { TeamDoc } from "@/lib/firebase/matches";
+import type { SpecialBetDoc } from "@/lib/firebase/special-bets";
 import type { OtherBet } from "@/lib/types";
 import type { ScoreboardEntry } from "@/components/scoreboard";
 import type { OtherSpecialBet } from "@/components/special-bets-panel";
@@ -19,21 +27,21 @@ export default async function HomePage() {
 
   const [user, matches, teams, myBets, allUsers, allBets, mySpecialBets, allSpecialBets, allUserStats] =
     await Promise.all([
-      getUserById(session.userId),
-      getAllMatches(),
-      getAllTeams(),
+      getCachedUserById(session.userId),
+      getCachedAllMatches(),
+      getCachedAllTeams(),
       getBetsByUser(session.userId),
-      getAllUsers(),
-      getAllBets(),
+      getCachedAllUsers(),
+      getCachedAllBets(),
       getSpecialBetsByUser(session.userId),
-      getAllSpecialBets(),
-      getAllUserStats(),
+      getCachedAllSpecialBets(),
+      getCachedAllUserStats(),
     ]);
 
   if (!user) redirect("/login");
 
-  const teamsMap = Object.fromEntries(teams.map((t) => [t.id, t]));
-  const userNameMap = Object.fromEntries(allUsers.map((u) => [u.id, u.name]));
+  const teamsMap = Object.fromEntries(teams.map((t: TeamDoc) => [t.id, t]));
+  const userNameMap = Object.fromEntries(allUsers.map((u: { id: string; name: string }) => [u.id, u.name]));
 
   const otherBetsMap: Record<string, OtherBet[]> = {};
   const pointsPerUser: Record<string, number> = {};
@@ -55,7 +63,7 @@ export default async function HomePage() {
     });
   }
 
-  const scoreboard: ScoreboardEntry[] = allUsers.map((u) => {
+  const scoreboard: ScoreboardEntry[] = allUsers.map((u: { id: string; name: string }) => {
     const stats = allUserStats[u.id];
     return {
       userId: u.id,
@@ -72,8 +80,8 @@ export default async function HomePage() {
 
   const otherChampionBets: OtherSpecialBet[] = isSpecialLocked
     ? allSpecialBets
-        .filter((b) => b.type === "champion" && b.userId !== session.userId)
-        .map((b) => ({
+        .filter((b: SpecialBetDoc) => b.type === "champion" && b.userId !== session.userId)
+        .map((b: SpecialBetDoc) => ({
           userName: userNameMap[b.userId] ?? b.userId,
           teamId: b.teamId,
           teamName: b.teamName,
