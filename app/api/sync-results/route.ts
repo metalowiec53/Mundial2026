@@ -232,9 +232,9 @@ export async function GET(req: NextRequest) {
   }
 
   if (synced > 0) {
-    revalidateTag(CACHE_TAGS.matches, "max");
-    revalidateTag(CACHE_TAGS.bets, "max");
-    revalidateTag(CACHE_TAGS.userStats, "max");
+    revalidateTag(CACHE_TAGS.matches, { expire: 0 });
+    revalidateTag(CACHE_TAGS.bets, { expire: 0 });
+    revalidateTag(CACHE_TAGS.userStats, { expire: 0 });
   }
 
   return Response.json({ synced, pending: pending.length, errors });

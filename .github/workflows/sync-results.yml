@@ -1,0 +1,16 @@
+name: Sync match results
+
+on:
+  schedule:
+    # Every 30 minutes — catches match results within 30 min of final whistle
+    - cron: "*/30 * * * *"
+  workflow_dispatch: # allow manual trigger from GitHub UI
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call sync endpoint
+        run: |
+          curl --fail --silent --show-error \
+            "${{ secrets.APP_URL }}/api/sync-results?secret=${{ secrets.CRON_SECRET }}"
