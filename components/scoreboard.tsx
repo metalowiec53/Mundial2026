@@ -5,6 +5,9 @@ export interface ScoreboardEntry {
   userName: string;
   totalPoints: number;
   betsCount: number;
+  streak: number;
+  completedGroups: string[];
+  exactScoreCount: number;
 }
 
 interface Props {
@@ -30,9 +33,7 @@ export default function Scoreboard({ entries, currentUserId }: Props) {
           return (
             <div
               key={entry.userId}
-              className={`flex items-center gap-3 px-4 py-3 ${
-                isMe ? "bg-green-900/20" : ""
-              }`}
+              className={`flex items-center gap-3 px-4 py-3 ${isMe ? "bg-green-900/20" : ""}`}
             >
               <div className="w-6 text-center shrink-0">
                 {medal ? (
@@ -43,23 +44,37 @@ export default function Scoreboard({ entries, currentUserId }: Props) {
               </div>
 
               <div className="flex-1 min-w-0">
-                <p
-                  className={`text-sm font-semibold truncate ${
-                    isMe ? "text-green-400" : "text-white"
-                  }`}
-                >
+                <p className={`text-sm font-semibold truncate ${isMe ? "text-green-400" : "text-white"}`}>
                   {entry.userName}
                   {isMe && <span className="text-zinc-500 font-normal text-xs ml-1">(ty)</span>}
                 </p>
-                <p className="text-xs text-zinc-600">{entry.betsCount} typów</p>
+                <div className="flex items-center gap-1 mt-0.5 flex-wrap">
+                  <span className="text-xs text-zinc-600">{entry.betsCount} typów</span>
+                  {entry.streak >= 3 && (
+                    <span className="text-[10px] font-bold text-orange-400 bg-orange-500/10 border border-orange-500/20 px-1.5 py-0.5 rounded-full">
+                      🔥 {entry.streak}
+                    </span>
+                  )}
+                  {entry.exactScoreCount > 0 && (
+                    <span className="text-[10px] font-bold text-blue-400 bg-blue-500/10 border border-blue-500/20 px-1.5 py-0.5 rounded-full">
+                      🎯 {entry.exactScoreCount}
+                    </span>
+                  )}
+                  {entry.completedGroups.map((g) => (
+                    <span
+                      key={g}
+                      className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded-full"
+                    >
+                      {g}
+                    </span>
+                  ))}
+                </div>
               </div>
 
               <div className="shrink-0 text-right">
-                <p
-                  className={`text-sm font-bold tabular-nums ${
-                    i === 0 ? "text-yellow-400" : isMe ? "text-green-400" : "text-white"
-                  }`}
-                >
+                <p className={`text-sm font-bold tabular-nums ${
+                  i === 0 ? "text-yellow-400" : isMe ? "text-green-400" : "text-white"
+                }`}>
                   {entry.totalPoints}
                 </p>
                 <p className="text-xs text-zinc-600">pkt</p>

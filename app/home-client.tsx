@@ -14,6 +14,8 @@ import Scoreboard from "@/components/scoreboard";
 import SpecialBetsPanel from "@/components/special-bets-panel";
 import NextMatchPanel from "@/components/next-match-panel";
 import BracketView from "@/components/bracket-view";
+import ScoringRules from "@/components/scoring-rules";
+import TournamentProgress from "@/components/tournament-progress";
 import { logoutAction } from "@/app/actions";
 
 const GROUPS = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"] as const;
@@ -30,6 +32,7 @@ interface Props {
   myChampionBet?: SpecialBetDoc;
   otherChampionBets: OtherSpecialBet[];
   isSpecialLocked: boolean;
+  myBoosterMatchId: string | null;
 }
 
 export default function HomeClient({
@@ -44,6 +47,7 @@ export default function HomeClient({
   myChampionBet,
   otherChampionBets,
   isSpecialLocked,
+  myBoosterMatchId,
 }: Props) {
   const [mainTab, setMainTab] = useState<"grupy" | "drabinka">("grupy");
   const [activeGroup, setActiveGroup] = useState<string>("A");
@@ -121,6 +125,7 @@ export default function HomeClient({
 
   const rankingContent = (
     <div className="space-y-4">
+      <ScoringRules />
       <SpecialBetsPanel
         teams={teams}
         myBet={myChampionBet}
@@ -137,6 +142,7 @@ export default function HomeClient({
       teamsMap={teamsMap}
       bets={bets}
       otherBetsMap={otherBetsMap}
+      myBoosterMatchId={myBoosterMatchId}
     />
   );
 
@@ -215,6 +221,8 @@ export default function HomeClient({
             ))}
           </div>
         )}
+
+        <TournamentProgress matches={matches} />
       </header>
 
       {/* ── Drabinka ─────────────────────────────────────── */}

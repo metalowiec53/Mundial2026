@@ -11,9 +11,10 @@ interface Props {
   teamsMap: Record<string, TeamDoc>;
   bets: Record<string, BetDoc>;
   otherBetsMap: Record<string, OtherBet[]>;
+  myBoosterMatchId: string | null;
 }
 
-export default function BracketView({ knockoutMatches, teamsMap, bets, otherBetsMap }: Props) {
+export default function BracketView({ knockoutMatches, teamsMap, bets, otherBetsMap, myBoosterMatchId }: Props) {
   const matchById = Object.fromEntries(knockoutMatches.map((m) => [m.id, m]));
 
   const byStage = Object.fromEntries(
@@ -47,6 +48,7 @@ export default function BracketView({ knockoutMatches, teamsMap, bets, otherBets
                     slotB={{ team: teamB, label: def.slotB.label }}
                     bet={bets[def.id]}
                     otherBets={otherBetsMap[def.id]}
+                    myBoosterMatchId={myBoosterMatchId}
                   />
                 );
               })}

@@ -3,7 +3,7 @@
 import { getSession } from "@/lib/auth";
 import { getAllTeams } from "@/lib/firebase/matches";
 import { saveSpecialBet } from "@/lib/firebase/special-bets";
-import { FIRST_KICKOFF_AT } from "@/lib/constants";
+import { CHAMPION_BET_DEADLINE } from "@/lib/constants";
 
 export async function saveChampionBetAction(
   teamId: string
@@ -11,8 +11,8 @@ export async function saveChampionBetAction(
   const session = await getSession();
   if (!session) return { error: "Nie zalogowany" };
 
-  if (new Date() >= FIRST_KICKOFF_AT) {
-    return { error: "Typy specjalne są zablokowane — turniej już się rozpoczął" };
+  if (new Date() > CHAMPION_BET_DEADLINE) {
+    return { error: "Typ na zwycięzcę jest zablokowany — minął termin 14 czerwca" };
   }
 
   const teams = await getAllTeams();

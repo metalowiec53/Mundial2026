@@ -6,6 +6,7 @@ import type { MatchDoc, TeamDoc } from "@/lib/firebase/matches";
 import type { BetDoc } from "@/lib/firebase/bets";
 import type { OtherBet } from "@/lib/types";
 import { saveBetAction } from "@/app/matches/actions";
+import { setBoosterAction } from "@/app/booster/actions";
 
 interface TeamSlot {
   team?: TeamDoc;
@@ -19,6 +20,7 @@ interface Props {
   slotB: TeamSlot;
   bet?: BetDoc;
   otherBets?: OtherBet[];
+  myBoosterMatchId: string | null;
 }
 
 function formatKickoff(iso: string): string {
@@ -80,16 +82,28 @@ function SlotDisplay({ slot }: { slot: TeamSlot }) {
   );
 }
 
-export default function BracketMatchCard({ matchId, match, slotA, slotB, bet, otherBets }: Props) {
+export default function BracketMatchCard({
+  matchId,
+  match,
+  slotA,
+  slotB,
+  bet,
+  otherBets,
+  myBoosterMatchId,
+}: Props) {
   const teamsKnown = !!slotA.team && !!slotB.team;
   const isLocked = match ? new Date(match.kickoff) <= new Date() : !teamsKnown;
   const isFinished = match?.status === "finished";
   const hasBet = bet !== undefined;
 
+  const isThisMatchBoosted = myBoosterMatchId === matchId;
+  const boosterUsedElsewhere = myBoosterMatchId !== null && !isThisMatchBoosted;
+
   const [a, setA] = useState(bet?.scoreA !== undefined ? String(bet.scoreA) : "");
   const [b, setB] = useState(bet?.scoreB !== undefined ? String(bet.scoreB) : "");
   const [error, setError] = useState("");
   const [isPending, startTransition] = useTransition();
+  const [isBoosterPending, startBoosterTransition] = useTransition();
   const router = useRouter();
 
   function handleSubmit(e: React.FormEvent) {
@@ -100,6 +114,14 @@ export default function BracketMatchCard({ matchId, match, slotA, slotB, bet, ot
     setError("");
     startTransition(async () => {
       const result = await saveBetAction(matchId, scoreA, scoreB);
+      if (result?.error) setError(result.error);
+      else router.refresh();
+    });
+  }
+
+  function handleBoosterToggle() {
+    startBoosterTransition(async () => {
+      const result = await setBoosterAction(isThisMatchBoosted ? null : matchId);
       if (result?.error) setError(result.error);
       else router.refresh();
     });
@@ -175,6 +197,9 @@ export default function BracketMatchCard({ matchId, match, slotA, slotB, bet, ot
                   <span className="text-white font-bold text-sm">
                     {bet.scoreA} : {bet.scoreB}
                   </span>
+                  {isThisMatchBoosted && !isFinished && (
+                    <span className="text-amber-400 text-xs font-bold">⚡ x2</span>
+                  )}
                 </div>
                 <div className="flex items-center gap-2">
                   {bet.points !== undefined && (
@@ -195,6 +220,43 @@ export default function BracketMatchCard({ matchId, match, slotA, slotB, bet, ot
           </div>
         )}
       </div>
+
+      {/* Booster toggle — only before match starts */}
+      {!isLocked && teamsKnown && (
+        <>
+          <div className="mx-4 h-px bg-zinc-700/40" />
+          <div className="px-4 py-2.5 flex items-center justify-between gap-2">
+            <div className="flex items-center gap-1.5">
+              <span className="text-[10px] text-zinc-500">Doładowanie x2</span>
+              {boosterUsedElsewhere && (
+                <span className="text-[10px] text-zinc-600">(użyte na innym meczu)</span>
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={handleBoosterToggle}
+              disabled={isBoosterPending || boosterUsedElsewhere}
+              className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
+                isThisMatchBoosted
+                  ? "bg-amber-500/20 text-amber-400 border border-amber-500/40 hover:bg-amber-500/30"
+                  : "bg-zinc-700/60 text-zinc-400 border border-zinc-600 hover:bg-zinc-700"
+              }`}
+            >
+              ⚡ {isThisMatchBoosted ? "Aktywne" : "Użyj"}
+            </button>
+          </div>
+        </>
+      )}
+
+      {/* Booster indicator when match locked but booster was applied */}
+      {isLocked && isThisMatchBoosted && !isFinished && (
+        <>
+          <div className="mx-4 h-px bg-zinc-700/40" />
+          <div className="px-4 py-2 text-center">
+            <span className="text-xs text-amber-400 font-bold">⚡ Doładowanie aktywne</span>
+          </div>
+        </>
+      )}
 
       {/* Other players — visible after kickoff */}
       {isLocked && teamsKnown && otherBets && otherBets.length > 0 && (

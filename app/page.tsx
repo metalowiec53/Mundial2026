@@ -4,7 +4,8 @@ import { getUserById, getAllUsers } from "@/lib/firebase/users";
 import { getAllMatches, getAllTeams } from "@/lib/firebase/matches";
 import { getBetsByUser, getAllBets } from "@/lib/firebase/bets";
 import { getSpecialBetsByUser, getAllSpecialBets } from "@/lib/firebase/special-bets";
-import { FIRST_KICKOFF_AT } from "@/lib/constants";
+import { getAllUserStats } from "@/lib/firebase/user-stats";
+import { CHAMPION_BET_DEADLINE, FIRST_KICKOFF_AT } from "@/lib/constants";
 import HomeClient from "./home-client";
 import type { OtherBet } from "@/lib/types";
 import type { ScoreboardEntry } from "@/components/scoreboard";
@@ -16,7 +17,7 @@ export default async function HomePage() {
   const session = await getSession();
   if (!session) redirect("/login");
 
-  const [user, matches, teams, myBets, allUsers, allBets, mySpecialBets, allSpecialBets] =
+  const [user, matches, teams, myBets, allUsers, allBets, mySpecialBets, allSpecialBets, allUserStats] =
     await Promise.all([
       getUserById(session.userId),
       getAllMatches(),
@@ -26,6 +27,7 @@ export default async function HomePage() {
       getAllBets(),
       getSpecialBetsByUser(session.userId),
       getAllSpecialBets(),
+      getAllUserStats(),
     ]);
 
   if (!user) redirect("/login");
@@ -53,14 +55,20 @@ export default async function HomePage() {
     });
   }
 
-  const scoreboard: ScoreboardEntry[] = allUsers.map((u) => ({
-    userId: u.id,
-    userName: u.name,
-    totalPoints: pointsPerUser[u.id] ?? 0,
-    betsCount: betsCountPerUser[u.id] ?? 0,
-  }));
+  const scoreboard: ScoreboardEntry[] = allUsers.map((u) => {
+    const stats = allUserStats[u.id];
+    return {
+      userId: u.id,
+      userName: u.name,
+      totalPoints: (pointsPerUser[u.id] ?? 0) + (stats?.groupBonusPoints ?? 0),
+      betsCount: betsCountPerUser[u.id] ?? 0,
+      streak: stats?.currentStreak ?? 0,
+      completedGroups: stats?.completedGroups ?? [],
+      exactScoreCount: stats?.exactScoreCount ?? 0,
+    };
+  });
 
-  const isSpecialLocked = new Date() >= FIRST_KICKOFF_AT;
+  const isSpecialLocked = new Date() > CHAMPION_BET_DEADLINE;
 
   const otherChampionBets: OtherSpecialBet[] = isSpecialLocked
     ? allSpecialBets
@@ -73,6 +81,8 @@ export default async function HomePage() {
           points: b.points,
         }))
     : [];
+
+  const myBoosterMatchId = allUserStats[session.userId]?.boosterMatchId ?? null;
 
   return (
     <HomeClient
@@ -87,6 +97,7 @@ export default async function HomePage() {
       myChampionBet={mySpecialBets["champion"]}
       otherChampionBets={otherChampionBets}
       isSpecialLocked={isSpecialLocked}
+      myBoosterMatchId={myBoosterMatchId}
     />
   );
 }
