@@ -264,5 +264,5 @@ export async function GET(req: NextRequest) {
     revalidateTag(CACHE_TAGS.userStats, { expire: 0 });
   }
 
-  return Response.json({ synced, pending: pending.length, errors });
+  return Response.json({ synced, pending: pending.length, errors, fdoCount: fdoMatches.length, fdoSample: fdoMatches[0] ?? null });
 }
