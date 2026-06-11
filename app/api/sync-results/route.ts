@@ -27,6 +27,13 @@ export async function GET(req: NextRequest) {
   const now = Date.now();
   const MATCH_DURATION_MS = 115 * 60 * 1000;
 
+  // Manual override (emergency fallback): ?teamA=MEX&teamB=RSA&scoreA=2&scoreB=1
+  const overrideTeamA = req.nextUrl.searchParams.get("teamA");
+  const overrideTeamB = req.nextUrl.searchParams.get("teamB");
+  const overrideScoreA = req.nextUrl.searchParams.get("scoreA");
+  const overrideScoreB = req.nextUrl.searchParams.get("scoreB");
+  const hasOverride = overrideTeamA && overrideTeamB && overrideScoreA !== null && overrideScoreB !== null;
+
   const [allMatches, allUserStatsMap] = await Promise.all([
     getAllMatches(),
     getAllUserStats(),
@@ -69,36 +76,51 @@ export async function GET(req: NextRequest) {
       continue;
     }
 
-    const fdo = fdoMatches.find(
-      (m) =>
-        (m.homeTeam.tla === teamA.shortCode && m.awayTeam.tla === teamB.shortCode) ||
-        (m.homeTeam.tla === teamB.shortCode && m.awayTeam.tla === teamA.shortCode)
-    );
-    if (!fdo) {
-      const available = fdoMatches.map((m) => `${m.homeTeam.tla}-${m.awayTeam.tla}`).join(", ");
-      errors.push(`No FDO match for ${teamA.shortCode}-${teamB.shortCode}. Available: [${available}]`);
-      continue;
-    }
-    if (fdo.score.fullTime.home === null) {
-      errors.push(`Score not ready for ${teamA.shortCode}-${teamB.shortCode}: status=${fdo.status} score=${JSON.stringify(fdo.score)}`);
-      continue;
-    }
-
-    const homeIsA = fdo.homeTeam.tla === teamA.shortCode;
-    const wentToPenalties = fdo.score.duration === "PENALTY_SHOOTOUT";
-
-    const scoreHome = fdo.score.extraTime?.home ?? fdo.score.fullTime.home;
-    const scoreAway = fdo.score.extraTime?.away ?? fdo.score.fullTime.away ?? 0;
-
-    const scoreA = homeIsA ? scoreHome : scoreAway;
-    const scoreB = homeIsA ? scoreAway : scoreHome;
-
+    let scoreA: number;
+    let scoreB: number;
+    let wentToPenalties = false;
     let penaltyWinnerId: string | undefined;
-    if (wentToPenalties && fdo.score.winner) {
-      penaltyWinnerId =
-        fdo.score.winner === "HOME_TEAM"
-          ? (homeIsA ? match.teamAId : match.teamBId)
-          : (homeIsA ? match.teamBId : match.teamAId);
+
+    const isOverrideMatch =
+      hasOverride &&
+      ((overrideTeamA === teamA.shortCode && overrideTeamB === teamB.shortCode) ||
+       (overrideTeamA === teamB.shortCode && overrideTeamB === teamA.shortCode));
+
+    if (isOverrideMatch) {
+      const rawA = parseInt(overrideScoreA!);
+      const rawB = parseInt(overrideScoreB!);
+      scoreA = overrideTeamA === teamA.shortCode ? rawA : rawB;
+      scoreB = overrideTeamA === teamA.shortCode ? rawB : rawA;
+    } else {
+      const fdo = fdoMatches.find(
+        (m) =>
+          (m.homeTeam.tla === teamA.shortCode && m.awayTeam.tla === teamB.shortCode) ||
+          (m.homeTeam.tla === teamB.shortCode && m.awayTeam.tla === teamA.shortCode)
+      );
+      if (!fdo) {
+        errors.push(`No match found for ${teamA.shortCode}-${teamB.shortCode}`);
+        continue;
+      }
+      if (fdo.score.fullTime.home === null) {
+        errors.push(`Score not ready for ${teamA.shortCode}-${teamB.shortCode}`);
+        continue;
+      }
+
+      const homeIsA = fdo.homeTeam.tla === teamA.shortCode;
+      wentToPenalties = fdo.score.duration === "PENALTY_SHOOTOUT";
+
+      const scoreHome = fdo.score.extraTime?.home ?? fdo.score.fullTime.home;
+      const scoreAway = fdo.score.extraTime?.away ?? fdo.score.fullTime.away ?? 0;
+
+      scoreA = homeIsA ? scoreHome : scoreAway;
+      scoreB = homeIsA ? scoreAway : scoreHome;
+
+      if (wentToPenalties && fdo.score.winner) {
+        penaltyWinnerId =
+          fdo.score.winner === "HOME_TEAM"
+            ? (homeIsA ? match.teamAId : match.teamBId)
+            : (homeIsA ? match.teamBId : match.teamAId);
+      }
     }
 
     const update: Partial<MatchDoc> & { status: "finished" } = {
@@ -195,7 +217,6 @@ export async function GET(req: NextRequest) {
 
     const groupMatchIds = groupMatches.map((m) => m.id);
 
-    // Load all bets for this group (already committed above)
     const betsByUser: Record<string, Record<string, number>> = {};
     for (const matchId of groupMatchIds) {
       const snap = await db.collection("bets").where("matchId", "==", matchId).get();
@@ -214,7 +235,6 @@ export async function GET(req: NextRequest) {
       const stats = liveStats[userId] ?? { ...DEFAULT_USER_STATS };
       if (stats.completedGroups.includes(groupId)) continue;
 
-      // Must have bet on every group match with correct outcome
       if (Object.keys(matchPoints).length < groupMatchIds.length) continue;
       if (!Object.values(matchPoints).every((pts) => pts >= 1)) continue;
 
