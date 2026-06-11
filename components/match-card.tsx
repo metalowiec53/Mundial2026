@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useEffect, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import type { MatchDoc, TeamDoc } from "@/lib/firebase/matches";
 import type { BetDoc } from "@/lib/firebase/bets";
@@ -91,6 +91,13 @@ export default function MatchCard({ match, teamA, teamB, bet, otherBets }: Props
   const [error, setError] = useState("");
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
+
+  // Sync inputs when the server bet prop updates (e.g. after router.refresh() completes
+  // while the component was already mounted from a group switch)
+  useEffect(() => {
+    if (bet?.scoreA !== undefined) setA(String(bet.scoreA));
+    if (bet?.scoreB !== undefined) setB(String(bet.scoreB));
+  }, [bet?.scoreA, bet?.scoreB]);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
