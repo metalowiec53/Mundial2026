@@ -109,8 +109,11 @@ export async function GET(req: NextRequest) {
       const homeIsA = fdo.homeTeam.tla === teamA.shortCode;
       wentToPenalties = fdo.score.duration === "PENALTY_SHOOTOUT";
 
-      const scoreHome = fdo.score.extraTime?.home ?? fdo.score.fullTime.home;
-      const scoreAway = fdo.score.extraTime?.away ?? fdo.score.fullTime.away ?? 0;
+      // Use extraTime score only when the match actually went to ET/penalties —
+      // the API may return extraTime: { home: 0, away: 0 } for regular matches.
+      const wentToET = fdo.score.duration !== "REGULAR";
+      const scoreHome = (wentToET ? fdo.score.extraTime?.home : null) ?? fdo.score.fullTime.home!;
+      const scoreAway = (wentToET ? fdo.score.extraTime?.away : null) ?? fdo.score.fullTime.away ?? 0;
 
       scoreA = homeIsA ? scoreHome : scoreAway;
       scoreB = homeIsA ? scoreAway : scoreHome;

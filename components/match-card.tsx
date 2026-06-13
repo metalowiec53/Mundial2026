@@ -57,27 +57,21 @@ function ScoreInput({
 }
 
 function PointsBadge({ points }: { points: number }) {
-  if (points === 5)
+  if (points <= 0)
     return (
-      <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">
-        +5
+      <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-zinc-700/60 text-zinc-500 border border-zinc-700">
+        +0
       </span>
     );
-  if (points === 3)
+  if (points >= 3)
     return (
       <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-green-500/20 text-green-400 border border-green-500/30">
-        +3
-      </span>
-    );
-  if (points === 1)
-    return (
-      <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30">
-        +1
+        +{points}
       </span>
     );
   return (
-    <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-zinc-700/60 text-zinc-500 border border-zinc-700">
-      +0
+    <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30">
+      +{points}
     </span>
   );
 }
